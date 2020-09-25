@@ -12,7 +12,7 @@ import (
     "github.com/zjlsliupei/gexcel"
 )
 
-g, err := New("d:\\demo.xlxs")
+g, err := gexcel.New("d:\\demo.xlxs")
 if err != nil {
     fmt.Println(excelPath, " import err:", err)
     return
