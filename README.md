@@ -11,8 +11,9 @@ go get github.com/zjlsliupei/gexcel
 import (    
     "github.com/zjlsliupei/gexcel"
 )
+excelPath := "d:\\demo.xlxs"
 
-g, err := gexcel.New("d:\\demo.xlxs")
+g, err := gexcel.New(excelPath)
 if err != nil {
     fmt.Println(excelPath, " import err:", err)
     return
