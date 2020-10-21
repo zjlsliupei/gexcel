@@ -23,8 +23,8 @@ valid := `{
         {
             "title":"标题",
             "alias": "name",
-            "rule": "required",
-            "message": "required:标题必填"
+            "rule": "required|myFunc",
+            "message": "required:标题必填|myFunc:我是自定义验证"
         },
         {
             "title":"年龄",
@@ -39,6 +39,12 @@ valid := `{
     } 
 }
 `
+// 增加自定义验证器
+g.AddCustomValidator("myFunc", func(val interface{}) bool {
+    fmt.Println(val)
+    // false表示错误，true表示验证成功
+    return false
+})
 err = g.Validate(valid, "Sheet1")
 if err != nil {
     fmt.Println(err)

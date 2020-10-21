@@ -24,8 +24,8 @@ func TestImport(t *testing.T) {
 		{
 			"title":"案由",
 			"alias": "name",
-			"rule": "required",
-			"message": "required:案由必须填"
+			"rule": "required|myFunc",
+			"message": "required:案由必须填|myFunc:我是自定义验证"
 		},
 		{
 			"title":"当事人1",
@@ -40,6 +40,10 @@ func TestImport(t *testing.T) {
 	} 
 }
 `
+	g.AddCustomValidator("myFunc", func(val interface{}) bool {
+		fmt.Println("hh", val)
+		return false
+	})
 	err = g.Validate(valid, "Sheet1")
 	if err != nil {
 		t.Error(err)

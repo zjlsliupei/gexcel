@@ -12,6 +12,7 @@ import (
 type GExceler interface {
 	Validate(validRule string, sheetName string) error
 	GetRows(sheetName string) []map[string]string
+	AddCustomValidator(funcName string, cb func(val interface{}) bool) error
 }
 
 type GExcel struct {
@@ -22,6 +23,8 @@ type GExcel struct {
 	rawRows map[string][][]string
 	// 保存过滤后的数据
 	filterRows map[string][]map[string]string
+	// 自定义验证器
+	customValidator map[string]func(val interface{}) bool
 }
 
 func (e *GExcel) init(excelPath string) error {
@@ -34,6 +37,7 @@ func (e *GExcel) init(excelPath string) error {
 	e.rawRows = make(map[string][][]string)
 	e.header = make(map[string][]string)
 	e.filterRows = make(map[string][]map[string]string)
+	e.customValidator = make(map[string]func(val interface{}) bool)
 	return nil
 }
 
@@ -181,6 +185,12 @@ func (e *GExcel) valid(cell string, validRule map[string]string, rowNum int, col
 		message[strings.TrimSpace(_v[0])] = strings.TrimSpace(_v[1])
 	}
 	v.AddMessages(message)
+	// 判断自定义验证器
+	if len(e.customValidator) > 0 {
+		for funcName, cb := range e.customValidator {
+			v.AddValidator(funcName, cb)
+		}
+	}
 	if !v.Validate() {
 		errMsg := "第" + strconv.FormatInt(int64(rowNum+1), 10) +
 			"行,第" + strconv.FormatInt(int64(columnNum+1), 10) + "列:" + v.Errors.One()
@@ -194,6 +204,12 @@ func (e *GExcel) GetRows(sheetName string) []map[string]string {
 	if v, ok := e.filterRows[sheetName]; ok {
 		return v
 	}
+	return nil
+}
+
+// AddCustomValidator 添加自定义验证器
+func (e *GExcel) AddCustomValidator(funcName string, cb func(val interface{}) bool) error {
+	e.customValidator[funcName] = cb
 	return nil
 }
 
