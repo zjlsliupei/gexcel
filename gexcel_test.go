@@ -1,6 +1,7 @@
 package gexcel
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -44,10 +45,15 @@ func TestImport(t *testing.T) {
 		fmt.Println("hh", val)
 		return false
 	})
+	sheetNames := g.GetSheetList()
+	fmt.Println("sheetNames", sheetNames)
+	if len(sheetNames) <= 0 {
+		t.Error(errors.New("sheetName is empty"))
+	}
 	err = g.Validate(valid, "Sheet1")
 	if err != nil {
 		t.Error(err)
 	}
-	rows := g.GetRows("Sheet1")
+	rows := g.GetRows(sheetNames[0])
 	fmt.Println(rows)
 }

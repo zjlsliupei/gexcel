@@ -12,6 +12,7 @@ import (
 type GExceler interface {
 	Validate(validRule string, sheetName string) error
 	GetRows(sheetName string) []map[string]string
+	GetSheetList() []string
 	AddCustomValidator(funcName string, cb func(val interface{}) bool) error
 }
 
@@ -211,6 +212,12 @@ func (e *GExcel) GetRows(sheetName string) []map[string]string {
 func (e *GExcel) AddCustomValidator(funcName string, cb func(val interface{}) bool) error {
 	e.customValidator[funcName] = cb
 	return nil
+}
+
+// GetSheetList 获取所有sheetName
+func (e *GExcel) GetSheetList() (list []string) {
+	list = e.fileHandle.GetSheetList()
+	return
 }
 
 func New(excelPath string) (GExceler, error) {
